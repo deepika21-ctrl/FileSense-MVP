@@ -1,0 +1,56 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #fefcf5;
+  color: #333;
+  max-width: 520px;
+  margin: 60px auto;
+}
+
+h1 {
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+  color: #777;
+  margin-bottom: 30px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+.card {
+  background: white;
+  padding: 22px;
+  margin-top: 25px;
+  border-radius: 14px;
+}
+
+.filename {
+  color: #888;
+  font-size: 14px;
+}
+
+.confidence {
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.confidence.high { color: green; }
+.confidence.medium { color: orange; }
+.confidence.low { color: red; }
+
+.why {
+  margin-top: 12px;
+}
+
+.last-seen {
+  margin-top: 12px;
+  color: #666;
+  font-size: 14px;
+}
