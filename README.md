@@ -38,5 +38,7 @@ FileSense aims to make file-deletion decisions **simple, calm, and informative**
 No installation or backend setup required.
 
 ---
+## 🔗 Live Demo
+👉 https://yourusername.github.io/repository-name/
 
 
