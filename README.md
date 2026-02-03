@@ -60,4 +60,4 @@ FileSense aims to make file-deletion decisions **simple, calm, and informative**
 ---
 
 ## 🔗 Live Demo
-👉 https://deepika21-ctrl.github.io/repository-name/
+👉 https://deepika21-ctrl.github.io/FileSense-MVP/
