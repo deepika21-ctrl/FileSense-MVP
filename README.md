@@ -1,63 +1,113 @@
-# FileSense MVP 🗂️✨  
-**Can I delete this?** — a calm way to understand your files.
+# 📁 FileSense – Intelligent File Deletion Advisor
 
-FileSense is a lightweight, beginner-friendly MVP that helps users understand what a file or folder might be and whether it’s safe to delete.  
-It uses a small mock dataset and **does not access real system files**, making it safe for learning, demos, and academic submissions.
+A smart, browser-based file safety assistant that helps users understand whether a file or folder is safe to delete.
+
+FileSense simulates intelligent decision-making using structured metadata, risk scoring, typo-tolerant search, and contextual guidance — all without accessing real system files.
+
+---
+
+## 🚀 Live Demo
+(Add your deployment link here)
+
+---
+
+## 🧠 Problem Statement
+
+Many users hesitate before deleting unfamiliar files like:
+
+- `System32`
+- `node_modules`
+- Random PDFs or folders
+
+Accidentally deleting system-critical files can cause system failure, while unused files waste storage.
+
+FileSense provides a safe, guided way to understand file impact before deletion.
 
 ---
 
 ## ✨ Key Features
-- 🔍 Search files, folders, or app names using keywords  
-- 🧘 Calm, human-friendly explanations instead of technical warnings  
-- 📄 Result cards with clear, structured information  
-- 📦 Uses a mock dataset (no real file scanning)  
-- ⚡ Lightweight, fast, and framework-free  
+
+### 🔍 Smart Search
+- Top 3 result matching
+- Typo-tolerant fuzzy search (Levenshtein distance with threshold)
+- “Did you mean?” suggestions
+- Search across file name, nickname, and app
+
+### ⚠️ Risk & Confidence Analysis
+- Separate **Risk badge** (Low / Medium / High / Extreme)
+- Confidence indicator
+- Recommended action guidance
+
+### 📋 Structured Explanation
+- “Why this exists” contextual explanation
+- Bullet-point breakdown of safety impact
+- Human-friendly “Last opened” messaging
+
+### 🎨 UX Enhancements
+- Empty state handling
+- Suggestion chips
+- Responsive layout for wide screens
+- Accessibility focus states
+- Subtle elevation & hover animations
+- Mock-data disclaimer for safety transparency
 
 ---
 
-## 🧠 Why This Project
-Many users delete files to free up storage without understanding their purpose, which can lead to system errors or broken applications.  
-FileSense aims to make file-deletion decisions **simple, calm, and informative**, especially for non-technical users and beginners.
+## 🏗️ Tech Stack
 
----
+- **HTML5**
+- **CSS3 (Responsive + Accessibility-focused)**
+- **Vanilla JavaScript**
+- Custom fuzzy search logic (Levenshtein distance with threshold)
 
-## 🛠️ Tech Stack
-- **HTML** – page structure  
-- **CSS** – clean, minimal, and calming UI  
-- **JavaScript (Vanilla)** – search logic and dynamic UI rendering  
-- **Mock Dataset (`data.js`)** – sample file and folder information for the MVP  
+No external libraries used.
 
 ---
 
 ## 🧩 How It Works
-1. The user enters a file, folder, or app name in the search bar  
-2. JavaScript searches the mock dataset using keyword matching  
-3. If a match is found, a result card is displayed showing:
-   - Friendly file name  
-   - Original file or folder name  
-   - Confidence level (High / Medium / Low)  
-   - Explanation of why the file exists  
-   - Estimated last opened time  
-4. If no match is found, the result area remains clear to avoid confusion  
+
+1. User searches for a file or folder name.
+2. System checks structured dataset.
+3. If no exact match:
+   - Runs typo-tolerant fuzzy matching.
+   - Shows intelligent suggestions.
+4. Displays:
+   - Risk level
+   - Confidence score
+   - Recommended action
+   - Context breakdown
+   - Last opened insight
 
 ---
 
-## ⚠️ Limitations
-- Does not scan or access real system files  
-- Uses a small, manually created mock dataset  
-- No backend, database, or AI in the MVP version  
-- Recommendations are informational, not guaranteed  
+## 📂 Project Structure
+/index.html
+/style.css
+/script.js
+/data.js
 
 ---
 
-## 🌱 Future Enhancements
-- Real file system scanning with user permissions  
-- AI-based explanations for smarter file insights  
-- File size, risk level, and dependency analysis  
-- OS-specific recommendations (Windows / macOS / Linux)  
-- Backend support with user history  
+## 🔐 Safety Notice
+
+This project uses a **mock dataset** and does not access or analyze real system files. It is designed as a safe simulation for learning and demonstration purposes.
 
 ---
 
-## 🔗 Live Demo
-👉 https://deepika21-ctrl.github.io/FileSense-MVP/
+## 📈 Future Improvements
+
+- Dark mode toggle
+- Real filesystem integration (with user permission)
+- AI-powered contextual reasoning
+- Storage impact estimation
+- Deployment as a browser extension
+
+---
+
+## 👩‍💻 Author
+
+**Deepika Yadav**  
+B.Tech CSE Student  
+Passionate about UX-focused product development and intelligent systems.
+
+---
