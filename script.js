@@ -3,7 +3,7 @@ const searchInput =
   document.getElementById("search") || document.getElementById("searchInput");
 const resultDiv = document.getElementById("result");
 
-function renderEmptyState(query) {
+function renderEmptyState() {
   resultDiv.innerHTML = `
     <div class="empty-state">
       <p class="empty-title">No matching file found</p>
@@ -17,6 +17,7 @@ function renderEmptyState(query) {
 
 function renderCard(file) {
   const actionText = file.action ? file.action : "No action provided";
+  const riskText = file.risk ? file.risk : "Unknown";
 
   resultDiv.innerHTML = `
     <div class="card">
@@ -27,6 +28,10 @@ function renderCard(file) {
 
       <p class="confidence ${String(file.confidence).toLowerCase()}">
         Confidence: ${file.confidence}
+      </p>
+
+      <p class="risk-badge risk-${String(riskText).toLowerCase()}">
+        Risk: ${riskText}
       </p>
 
       <p class="why">
@@ -49,7 +54,7 @@ if (searchInput) {
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.trim().toLowerCase();
 
-    // If input is empty, clear results (no empty-state needed)
+    // If input is empty, clear results
     if (query === "") {
       resultDiv.innerHTML = "";
       return;
@@ -65,7 +70,7 @@ if (searchInput) {
 
     // If no match, show empty state
     if (!file) {
-      renderEmptyState(query);
+      renderEmptyState();
       return;
     }
 
