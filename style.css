@@ -240,6 +240,17 @@ button {
   transform: translateY(-2px);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
 }
+.reasons {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: #555;
+  font-size: 14px;
+  text-align: left;
+}
+
+.reasons li {
+  margin: 6px 0;
+}
 
 
 
