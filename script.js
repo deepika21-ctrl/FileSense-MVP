@@ -10,10 +10,18 @@ searchInput.addEventListener("input", () => {
     f.app.toLowerCase().includes(query)
   );
 
-  if (!file || query === "") {
-    resultDiv.innerHTML = "";
-    return;
-  }
+ if (!file) {
+  resultDiv.innerHTML = `
+    <div class="empty-state">
+      <p class="empty-title">No matching file found</p>
+      <p class="empty-text">
+        Try searching a file or folder name like 
+        <strong>System32</strong> or <strong>node_modules</strong>.
+      </p>
+    </div>
+  `;
+  return;
+}
 
   resultDiv.innerHTML = `
     <div class="card">
@@ -42,4 +50,5 @@ document.querySelectorAll(".chip").forEach(chip => {
     searchInput.dispatchEvent(new Event("input"));
   });
 });
+
 
