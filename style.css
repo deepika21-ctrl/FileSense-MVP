@@ -54,3 +54,35 @@ input {
   color: #666;
   font-size: 14px;
 }
+.how-it-works {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.how-title {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.chip-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  background: #f8f8f8;
+  cursor: pointer;
+  font-size: 13px;
+  transition: 0.2s ease;
+}
+
+.chip:hover {
+  background: #eaeaea;
+}
+
