@@ -251,6 +251,12 @@ button {
 .reasons li {
   margin: 6px 0;
 }
+.last-seen {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #777;
+}
+
 
 
 
