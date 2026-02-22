@@ -13,7 +13,6 @@ function getAllSearchTerms() {
     terms.push(String(f.nickname));
     terms.push(String(f.app));
   });
-  // Unique + cleaned
   return [...new Set(terms.map((t) => t.trim()).filter(Boolean))];
 }
 
@@ -38,6 +37,55 @@ function getSuggestions(query, limit = 3) {
     .sort((a, b) => b.score - a.score || a.term.localeCompare(b.term));
 
   return scored.slice(0, limit).map((x) => x.term);
+}
+
+// ---------------------------
+// Typo-tolerance helpers
+// ---------------------------
+function normalizeText(str) {
+  return String(str || "")
+    .toLowerCase()
+    .replace(/[_\-]/g, " ") // node_modules -> node modules
+    .replace(/[^a-z0-9\s]/g, "") // remove symbols
+    .replace(/\s+/g, " ") // collapse spaces
+    .trim();
+}
+
+// Levenshtein distance with early exit (fast for small thresholds)
+function levenshteinLimited(a, b, maxDist = 2) {
+  a = normalizeText(a);
+  b = normalizeText(b);
+
+  if (!a || !b) return Infinity;
+  if (Math.abs(a.length - b.length) > maxDist) return Infinity;
+  if (a === b) return 0;
+
+  const prev = new Array(b.length + 1);
+  const curr = new Array(b.length + 1);
+
+  for (let j = 0; j <= b.length; j++) prev[j] = j;
+
+  for (let i = 1; i <= a.length; i++) {
+    curr[0] = i;
+    let rowMin = curr[0];
+
+    for (let j = 1; j <= b.length; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      curr[j] = Math.min(
+        prev[j] + 1, // deletion
+        curr[j - 1] + 1, // insertion
+        prev[j - 1] + cost // substitution
+      );
+      rowMin = Math.min(rowMin, curr[j]);
+    }
+
+    // Early exit if already worse than maxDist
+    if (rowMin > maxDist) return Infinity;
+
+    for (let j = 0; j <= b.length; j++) prev[j] = curr[j];
+  }
+
+  return prev[b.length];
 }
 
 // ---------------------------
@@ -114,7 +162,7 @@ function renderCards(matches) {
 }
 
 // ---------------------------
-// Search behavior (Top 3 matches)
+// Search behavior (Top 3 + typo tolerance)
 // ---------------------------
 if (searchInput) {
   searchInput.addEventListener("input", () => {
@@ -126,6 +174,7 @@ if (searchInput) {
       return;
     }
 
+    // Normal matching
     const matches = files
       .filter((f) => {
         return (
@@ -136,14 +185,32 @@ if (searchInput) {
       })
       .slice(0, 3);
 
-    // If no match, show empty state + suggestions
-    if (matches.length === 0) {
+    let finalMatches = matches;
+
+    // Typo-tolerant fallback only if no normal results and query is 2+ chars
+    if (finalMatches.length === 0 && query.length >= 2) {
+      const scored = files
+        .map((f) => {
+          const d1 = levenshteinLimited(query, f.originalName, 2);
+          const d2 = levenshteinLimited(query, f.nickname, 2);
+          const d3 = levenshteinLimited(query, f.app, 2);
+          const best = Math.min(d1, d2, d3);
+          return { file: f, dist: best };
+        })
+        .filter((x) => x.dist !== Infinity)
+        .sort((a, b) => a.dist - b.dist);
+
+      finalMatches = scored.slice(0, 3).map((x) => x.file);
+    }
+
+    // If still nothing, show empty state + suggestions
+    if (finalMatches.length === 0) {
       renderEmptyState(query);
       return;
     }
 
-    // If matches exist, render up to 3 cards
-    renderCards(matches);
+    // Render up to 3 matches (normal or typo-corrected)
+    renderCards(finalMatches);
   });
 }
 
