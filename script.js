@@ -34,3 +34,12 @@ searchInput.addEventListener("input", () => {
     </div>
   `;
 });
+// Chip click behavior
+document.querySelectorAll(".chip").forEach(chip => {
+  chip.addEventListener("click", () => {
+    const value = chip.getAttribute("data-value");
+    searchInput.value = value;
+    searchInput.dispatchEvent(new Event("input"));
+  });
+});
+
