@@ -22,8 +22,6 @@ function getSuggestions(query, limit = 3) {
 
   const terms = getAllSearchTerms();
 
-  // Simple scoring:
-  // 3 = startsWith, 2 = includes, 1 = shares first letter
   const scored = terms
     .map((term) => {
       const t = term.toLowerCase();
@@ -40,18 +38,17 @@ function getSuggestions(query, limit = 3) {
 }
 
 // ---------------------------
-// Typo-tolerance helpers
+// Typo tolerance helpers
 // ---------------------------
 function normalizeText(str) {
   return String(str || "")
     .toLowerCase()
-    .replace(/[_\-]/g, " ") // node_modules -> node modules
-    .replace(/[^a-z0-9\s]/g, "") // remove symbols
-    .replace(/\s+/g, " ") // collapse spaces
+    .replace(/[_\-]/g, " ")
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, " ")
     .trim();
 }
 
-// Levenshtein distance with early exit (fast for small thresholds)
 function levenshteinLimited(a, b, maxDist = 2) {
   a = normalizeText(a);
   b = normalizeText(b);
@@ -72,14 +69,13 @@ function levenshteinLimited(a, b, maxDist = 2) {
     for (let j = 1; j <= b.length; j++) {
       const cost = a[i - 1] === b[j - 1] ? 0 : 1;
       curr[j] = Math.min(
-        prev[j] + 1, // deletion
-        curr[j - 1] + 1, // insertion
-        prev[j - 1] + cost // substitution
+        prev[j] + 1,
+        curr[j - 1] + 1,
+        prev[j - 1] + cost
       );
       rowMin = Math.min(rowMin, curr[j]);
     }
 
-    // Early exit if already worse than maxDist
     if (rowMin > maxDist) return Infinity;
 
     for (let j = 0; j <= b.length; j++) prev[j] = curr[j];
@@ -89,7 +85,7 @@ function levenshteinLimited(a, b, maxDist = 2) {
 }
 
 // ---------------------------
-// UI renderers
+// UI Renderers
 // ---------------------------
 function renderEmptyState(query) {
   const suggestions = getSuggestions(query, 3);
@@ -126,8 +122,17 @@ function renderEmptyState(query) {
 function renderCards(matches) {
   resultDiv.innerHTML = matches
     .map((file) => {
-      const actionText = file.action ? file.action : "No action provided";
-      const riskText = file.risk ? file.risk : "Unknown";
+      const actionText = file.action || "No action provided";
+      const riskText = file.risk || "Unknown";
+
+      const reasons = Array.isArray(file.reasons) ? file.reasons : [];
+      const reasonsHtml = reasons.length
+        ? `
+          <ul class="reasons">
+            ${reasons.map((r) => `<li>${r}</li>`).join("")}
+          </ul>
+        `
+        : "";
 
       return `
         <div class="card">
@@ -148,6 +153,8 @@ function renderCards(matches) {
             <strong>Why this exists:</strong> ${file.why}
           </p>
 
+          ${reasonsHtml}
+
           <p class="action">
             <span class="label">Recommended action:</span> ${actionText}
           </p>
@@ -162,19 +169,17 @@ function renderCards(matches) {
 }
 
 // ---------------------------
-// Search behavior (Top 3 + typo tolerance)
+// Search behavior
 // ---------------------------
 if (searchInput) {
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.trim().toLowerCase();
 
-    // If input is empty, clear results
     if (query === "") {
       resultDiv.innerHTML = "";
       return;
     }
 
-    // Normal matching
     const matches = files
       .filter((f) => {
         return (
@@ -187,7 +192,6 @@ if (searchInput) {
 
     let finalMatches = matches;
 
-    // Typo-tolerant fallback only if no normal results and query is 2+ chars
     if (finalMatches.length === 0 && query.length >= 2) {
       const scored = files
         .map((f) => {
@@ -203,19 +207,17 @@ if (searchInput) {
       finalMatches = scored.slice(0, 3).map((x) => x.file);
     }
 
-    // If still nothing, show empty state + suggestions
     if (finalMatches.length === 0) {
       renderEmptyState(query);
       return;
     }
 
-    // Render up to 3 matches (normal or typo-corrected)
     renderCards(finalMatches);
   });
 }
 
 // ---------------------------
-// Main "Try searching" chips behavior
+// Chips behavior
 // ---------------------------
 document.querySelectorAll(".chip").forEach((chip) => {
   chip.addEventListener("click", () => {
@@ -228,9 +230,6 @@ document.querySelectorAll(".chip").forEach((chip) => {
   });
 });
 
-// ---------------------------
-// "Did you mean?" suggestion chip clicks (event delegation)
-// ---------------------------
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".suggestion-chip");
   if (!btn || !searchInput) return;
