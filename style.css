@@ -193,6 +193,12 @@ input {
 .suggestion-chip:hover {
   background: #f1f1f1;
 }
+@media (min-width: 900px) {
+  .container {
+    margin: 80px auto;
+    padding: 28px;
+  }
+}
 
 
 
