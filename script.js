@@ -1,16 +1,9 @@
-const searchInput = document.getElementById("search");
+// Grab elements (supports both id="search" and id="searchInput")
+const searchInput =
+  document.getElementById("search") || document.getElementById("searchInput");
 const resultDiv = document.getElementById("result");
 
-searchInput.addEventListener("input", () => {
-  const query = searchInput.value.toLowerCase();
-
-  const file = files.find(f =>
-    f.originalName.toLowerCase().includes(query) ||
-    f.nickname.toLowerCase().includes(query) ||
-    f.app.toLowerCase().includes(query)
-  );
-
- if (!file) {
+function renderEmptyState(query) {
   resultDiv.innerHTML = `
     <div class="empty-state">
       <p class="empty-title">No matching file found</p>
@@ -20,15 +13,19 @@ searchInput.addEventListener("input", () => {
       </p>
     </div>
   `;
-  return;
 }
+
+function renderCard(file) {
+  const actionText = file.action ? file.action : "No action provided";
 
   resultDiv.innerHTML = `
     <div class="card">
       <h2>${file.nickname}</h2>
       <p class="filename">${file.originalName}</p>
 
-      <p class="confidence ${file.confidence.toLowerCase()}">
+      <p><strong>App:</strong> ${file.app}</p>
+
+      <p class="confidence ${String(file.confidence).toLowerCase()}">
         Confidence: ${file.confidence}
       </p>
 
@@ -36,19 +33,55 @@ searchInput.addEventListener("input", () => {
         <strong>Why this exists:</strong> ${file.why}
       </p>
 
+      <p class="action">
+        <span class="label">Recommended action:</span> ${actionText}
+      </p>
+
       <p class="last-seen">
         You haven’t opened this in ${file.lastSeenMonths} month(s)
       </p>
     </div>
   `;
-});
-// Chip click behavior
-document.querySelectorAll(".chip").forEach(chip => {
+}
+
+// Search behavior
+if (searchInput) {
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.trim().toLowerCase();
+
+    // If input is empty, clear results (no empty-state needed)
+    if (query === "") {
+      resultDiv.innerHTML = "";
+      return;
+    }
+
+    const file = files.find((f) => {
+      return (
+        String(f.originalName).toLowerCase().includes(query) ||
+        String(f.nickname).toLowerCase().includes(query) ||
+        String(f.app).toLowerCase().includes(query)
+      );
+    });
+
+    // If no match, show empty state
+    if (!file) {
+      renderEmptyState(query);
+      return;
+    }
+
+    // If match, show card
+    renderCard(file);
+  });
+}
+
+// Chip click behavior (autofill + trigger search)
+document.querySelectorAll(".chip").forEach((chip) => {
   chip.addEventListener("click", () => {
-    const value = chip.getAttribute("data-value");
+    const value = chip.getAttribute("data-value") || "";
+    if (!searchInput) return;
+
     searchInput.value = value;
     searchInput.dispatchEvent(new Event("input"));
+    searchInput.focus();
   });
 });
-
-
