@@ -24,6 +24,14 @@ input {
   font-size: 16px;
 }
 
+/* Input focus (keyboard accessibility) */
+#searchInput:focus,
+#search:focus {
+  outline: none;
+  border-color: #888;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
+}
+
 .card {
   background: white;
   padding: 22px;
@@ -202,6 +210,7 @@ input {
 .card {
   text-align: left;
 }
+
 
 
 
