@@ -7,7 +7,7 @@ FileSense simulates intelligent decision-making using structured metadata, risk 
 ---
 
 ## 🚀 Live Demo
-(Add your deployment link here)
+ https://deepika21-ctrl.github.io/FileSense-MVP/
 
 ---
 
