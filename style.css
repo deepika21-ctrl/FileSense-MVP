@@ -104,5 +104,17 @@ input {
   font-size: 14px;
   color: #666;
 }
+.disclaimer {
+  margin-top: 18px;
+  font-size: 12px;
+  color: #777;
+  text-align: center;
+  line-height: 1.4;
+  padding: 10px 12px;
+  background: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 10px;
+}
+
 
 
