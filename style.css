@@ -115,6 +115,20 @@ input {
   border: 1px solid #eee;
   border-radius: 10px;
 }
+.action {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fafafa;
+  border: 1px solid #eee;
+  font-size: 14px;
+}
+
+.label {
+  font-weight: 600;
+  color: #333;
+}
+
 
 
 
