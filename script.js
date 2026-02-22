@@ -85,6 +85,18 @@ function levenshteinLimited(a, b, maxDist = 2) {
 }
 
 // ---------------------------
+// Human-friendly Last Opened formatter (NEW)
+// ---------------------------
+function formatLastOpened(months) {
+  const m = Number(months);
+
+  if (!Number.isFinite(m) || m < 0) return "Last opened: unknown";
+  if (m === 0) return "Opened recently";
+  if (m === 1) return "Not opened in 1 month";
+  return `Not opened in ${m} months`;
+}
+
+// ---------------------------
 // UI Renderers
 // ---------------------------
 function renderEmptyState(query) {
@@ -160,7 +172,7 @@ function renderCards(matches) {
           </p>
 
           <p class="last-seen">
-            You haven’t opened this in ${file.lastSeenMonths} month(s)
+            ${formatLastOpened(file.lastSeenMonths)}
           </p>
         </div>
       `;
