@@ -15,41 +15,45 @@ function renderEmptyState() {
   `;
 }
 
-function renderCard(file) {
-  const actionText = file.action ? file.action : "No action provided";
-  const riskText = file.risk ? file.risk : "Unknown";
+function renderCards(matches) {
+  resultDiv.innerHTML = matches
+    .map((file) => {
+      const actionText = file.action ? file.action : "No action provided";
+      const riskText = file.risk ? file.risk : "Unknown";
 
-  resultDiv.innerHTML = `
-    <div class="card">
-      <h2>${file.nickname}</h2>
-      <p class="filename">${file.originalName}</p>
+      return `
+        <div class="card">
+          <h2>${file.nickname}</h2>
+          <p class="filename">${file.originalName}</p>
 
-      <p><strong>App:</strong> ${file.app}</p>
+          <p><strong>App:</strong> ${file.app}</p>
 
-      <p class="confidence ${String(file.confidence).toLowerCase()}">
-        Confidence: ${file.confidence}
-      </p>
+          <p class="confidence ${String(file.confidence).toLowerCase()}">
+            Confidence: ${file.confidence}
+          </p>
 
-      <p class="risk-badge risk-${String(riskText).toLowerCase()}">
-        Risk: ${riskText}
-      </p>
+          <p class="risk-badge risk-${String(riskText).toLowerCase()}">
+            Risk: ${riskText}
+          </p>
 
-      <p class="why">
-        <strong>Why this exists:</strong> ${file.why}
-      </p>
+          <p class="why">
+            <strong>Why this exists:</strong> ${file.why}
+          </p>
 
-      <p class="action">
-        <span class="label">Recommended action:</span> ${actionText}
-      </p>
+          <p class="action">
+            <span class="label">Recommended action:</span> ${actionText}
+          </p>
 
-      <p class="last-seen">
-        You haven’t opened this in ${file.lastSeenMonths} month(s)
-      </p>
-    </div>
-  `;
+          <p class="last-seen">
+            You haven’t opened this in ${file.lastSeenMonths} month(s)
+          </p>
+        </div>
+      `;
+    })
+    .join("");
 }
 
-// Search behavior
+// Search behavior (Top 3 matches)
 if (searchInput) {
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.trim().toLowerCase();
@@ -60,22 +64,24 @@ if (searchInput) {
       return;
     }
 
-    const file = files.find((f) => {
-      return (
-        String(f.originalName).toLowerCase().includes(query) ||
-        String(f.nickname).toLowerCase().includes(query) ||
-        String(f.app).toLowerCase().includes(query)
-      );
-    });
+    const matches = files
+      .filter((f) => {
+        return (
+          String(f.originalName).toLowerCase().includes(query) ||
+          String(f.nickname).toLowerCase().includes(query) ||
+          String(f.app).toLowerCase().includes(query)
+        );
+      })
+      .slice(0, 3);
 
     // If no match, show empty state
-    if (!file) {
+    if (matches.length === 0) {
       renderEmptyState();
       return;
     }
 
-    // If match, show card
-    renderCard(file);
+    // If matches exist, render up to 3 cards
+    renderCards(matches);
   });
 }
 
