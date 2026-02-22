@@ -85,4 +85,24 @@ input {
 .chip:hover {
   background: #eaeaea;
 }
+.empty-state {
+  margin-top: 20px;
+  padding: 20px;
+  background: #fafafa;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px dashed #ddd;
+}
+
+.empty-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #666;
+}
+
 
