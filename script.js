@@ -3,7 +3,49 @@ const searchInput =
   document.getElementById("search") || document.getElementById("searchInput");
 const resultDiv = document.getElementById("result");
 
-function renderEmptyState() {
+// ---------------------------
+// Suggestions helpers
+// ---------------------------
+function getAllSearchTerms() {
+  const terms = [];
+  files.forEach((f) => {
+    terms.push(String(f.originalName));
+    terms.push(String(f.nickname));
+    terms.push(String(f.app));
+  });
+  // Unique + cleaned
+  return [...new Set(terms.map((t) => t.trim()).filter(Boolean))];
+}
+
+function getSuggestions(query, limit = 3) {
+  const q = String(query || "").toLowerCase();
+  if (!q) return [];
+
+  const terms = getAllSearchTerms();
+
+  // Simple scoring:
+  // 3 = startsWith, 2 = includes, 1 = shares first letter
+  const scored = terms
+    .map((term) => {
+      const t = term.toLowerCase();
+      let score = 0;
+      if (t.startsWith(q)) score = 3;
+      else if (t.includes(q)) score = 2;
+      else if (q[0] && t[0] === q[0]) score = 1;
+      return { term, score };
+    })
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score || a.term.localeCompare(b.term));
+
+  return scored.slice(0, limit).map((x) => x.term);
+}
+
+// ---------------------------
+// UI renderers
+// ---------------------------
+function renderEmptyState(query) {
+  const suggestions = getSuggestions(query, 3);
+
   resultDiv.innerHTML = `
     <div class="empty-state">
       <p class="empty-title">No matching file found</p>
@@ -11,6 +53,24 @@ function renderEmptyState() {
         Try searching a file or folder name like 
         <strong>System32</strong> or <strong>node_modules</strong>.
       </p>
+
+      ${
+        suggestions.length > 0
+          ? `
+            <div class="suggestions">
+              <p class="suggestions-title">Did you mean:</p>
+              <div class="suggestion-list">
+                ${suggestions
+                  .map(
+                    (s) =>
+                      `<button class="suggestion-chip" data-value="${s}">${s}</button>`
+                  )
+                  .join("")}
+              </div>
+            </div>
+          `
+          : ""
+      }
     </div>
   `;
 }
@@ -53,7 +113,9 @@ function renderCards(matches) {
     .join("");
 }
 
+// ---------------------------
 // Search behavior (Top 3 matches)
+// ---------------------------
 if (searchInput) {
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.trim().toLowerCase();
@@ -74,9 +136,9 @@ if (searchInput) {
       })
       .slice(0, 3);
 
-    // If no match, show empty state
+    // If no match, show empty state + suggestions
     if (matches.length === 0) {
-      renderEmptyState();
+      renderEmptyState(query);
       return;
     }
 
@@ -85,7 +147,9 @@ if (searchInput) {
   });
 }
 
-// Chip click behavior (autofill + trigger search)
+// ---------------------------
+// Main "Try searching" chips behavior
+// ---------------------------
 document.querySelectorAll(".chip").forEach((chip) => {
   chip.addEventListener("click", () => {
     const value = chip.getAttribute("data-value") || "";
@@ -95,4 +159,17 @@ document.querySelectorAll(".chip").forEach((chip) => {
     searchInput.dispatchEvent(new Event("input"));
     searchInput.focus();
   });
+});
+
+// ---------------------------
+// "Did you mean?" suggestion chip clicks (event delegation)
+// ---------------------------
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".suggestion-chip");
+  if (!btn || !searchInput) return;
+
+  const value = btn.getAttribute("data-value") || "";
+  searchInput.value = value;
+  searchInput.dispatchEvent(new Event("input"));
+  searchInput.focus();
 });
